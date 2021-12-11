@@ -1,4 +1,5 @@
 { lib
+, installShellFiles
 , python3Packages
 , fetchFromGitHub
 , enableGoogle ? false
@@ -19,6 +20,8 @@ buildPythonApplication rec {
     rev = version;
     sha256 = "1wqq4i23hppilp20fx5a5nj93xwf3wwwr2f8aasvn6jkv2l22vpl";
   };
+
+  nativeBuildInputs = [ installShellFiles ];
 
   propagatedBuildInputs = [
     ply
@@ -54,6 +57,11 @@ buildPythonApplication rec {
 
   postPatch = ''
     substituteInPlace dvc/daemon.py --subst-var-by dvc "$out/bin/dcv"
+  '';
+
+  postInstall = ''
+    installShellCompletion --bash --name dvc.bash scripts/completion/dvc.bash
+    installShellCompletion --zsh --name _dvc scripts/completion/dvc.zsh
   '';
 
   meta = with lib; {
